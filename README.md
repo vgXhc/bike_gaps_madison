@@ -6,8 +6,10 @@ Resources for identifying and describing the top-10 gaps in the low-stress bike 
   - residential density (American Community Survey)
   - job density (LODES)
   - existing low stress bike network (MPO)
+  - households without car (American Community Survey)
   - existing mode share (American Community Survey)
   - household income/poverty (American Community Survey)
   - race/ethnicity
+  - Aldermanic districts
   
 
