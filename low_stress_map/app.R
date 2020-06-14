@@ -93,16 +93,37 @@ t_map <- tm_shape(bike_share) +
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
+    sidebarLayout(position = "right",
+                  sidebarPanel(
+                      selectInput("layer", 
+                                  label = "Choose a variable to display",
+                                  choices = c("Bike mode share", 
+                                              "Households without vehicle",
+                                              "Median income"),
+                                  selected = "Bike mode share"),
+                      ),
+                  mainPanel(
+                      leafletOutput("my_tmap")
+                  )
+    )
 
-    leafletOutput("my_tmap")
+    
     
 )
 
 
 server <- function(input, output, session) {
+    
 
     output$my_tmap <- renderLeaflet({
-        tmap_leaflet(t_map)
+        x <- switch(input$layer,
+                    "Bike mode share" = bike_share,
+                    "Households without vehicle" = veh_avail,
+                    "Median income" = med_inc)
+        tmap_leaflet(tm_shape(x) +
+                         tm_polygons("estimate", title = input$layer, style = "jenks")+
+                         tm_shape(low_stress) +
+                         tm_lines("LTS_F"))
     })
     
     # When map is clicked, show a popup with coordinates
