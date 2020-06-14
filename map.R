@@ -34,18 +34,25 @@ med_inc <- get_acs5("S1901_C02_012")
 
 # Aldermanic districts
 # shapefile https://opendata.arcgis.com/datasets/81039877861c40a1857b2e7634951e04_10.zip
-download.file("https://opendata.arcgis.com/datasets/81039877861c40a1857b2e7634951e04_10.zip", "data/ald_dist.zip")
-unzip("data/ald_dist.zip", exdir = "data")
+#download.file("https://opendata.arcgis.com/datasets/81039877861c40a1857b2e7634951e04_10.zip", "data/ald_dist.zip")
+#unzip("data/ald_dist.zip", exdir = "data")
 ald_dist <- read_sf("data/4c9bfcdf-5c27-4997-9add-388fb5313aac202043-1-1k9c67z.t0l9.shp") %>% 
   st_make_valid() %>% #one polygon has some kind of error
   mutate(district = as.factor(ALD_DIST))
 
+# city limits
+city_limits <- read_sf("data/city_limit/City_Limit.shp")
+
 # low-stress bike network data
 
-traffic_stress <- read_sf("data/LTS/Merge_FeatureToLine_Clean.shp") 
+traffic_stress <- read_sf("data/LTS/Merge_FeatureToLine_Clean.shp") %>% 
+  st_transform(st_crs(city_limits))
 low_stress <- traffic_stress %>% 
   filter(LTS_F <= 2) %>% 
-  mutate(LTS_F = as_factor(LTS_F))
+  mutate(LTS_F = as_factor(LTS_F)) %>% 
+  st_within(city_limits)
+
+
 
 # overall road network data
 # this will allow filtering for roads that would easily be dieted
